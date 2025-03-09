@@ -29,6 +29,7 @@ db_uri = POSTGRES
 # Attempt to connect to PostgreSQL directly
 db = configure_db(pg_host, pg_user, pg_password, pg_db)
 
+
 st.success("Connected to PostgreSQL successfully!")
 
 
@@ -55,6 +56,7 @@ def validate_connection(engine):
         return False
 
 def configure_db(pg_host=None, pg_user=None, pg_password=None, pg_db=None):
+
 
     """Returns a SQLDatabase instance based on the selected configuration."""
     def create_and_validate_engine(db_url):
