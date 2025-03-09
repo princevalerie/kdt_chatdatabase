@@ -103,10 +103,13 @@ def configure_db(pg_host=None, pg_user=None, pg_password=None, pg_db=None):
             st.error(f"❌ PostgreSQL connection failed: {e}")
             st.stop()
 
-# Removed redundant database connection attempt
+# Initialize database connection
+db = configure_db(pg_host, pg_user, pg_password, pg_db)
+
 
 # Toolkit
-toolkit = SQLDatabaseToolkit(db=db, llm=llm)
+toolkit = SQLDatabaseToolkit(db=configure_db(pg_host, pg_user, pg_password, pg_db), llm=llm)
+
 
 # Create SQL Agent with strict table access
 def validate_query(query: str) -> bool:
