@@ -27,7 +27,8 @@ pg_db = os.getenv("POSTGRES_DB")
 db_uri = POSTGRES
 
 # Attempt to connect to PostgreSQL directly
-db = configure_db(db_uri, pg_host, pg_user, pg_password, pg_db)
+db = configure_db(pg_host, pg_user, pg_password, pg_db)
+
 st.success("Connected to PostgreSQL successfully!")
 
 
@@ -53,7 +54,8 @@ def validate_connection(engine):
         st.error(f"❌ Database connection validation failed: {str(e)}")
         return False
 
-def configure_db(db_uri, pg_host=None, pg_user=None, pg_password=None, pg_db=None):
+def configure_db(pg_host=None, pg_user=None, pg_password=None, pg_db=None):
+
     """Returns a SQLDatabase instance based on the selected configuration."""
     def create_and_validate_engine(db_url):
         engine = create_engine(db_url)
