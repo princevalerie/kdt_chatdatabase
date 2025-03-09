@@ -26,10 +26,6 @@ pg_db = os.getenv("POSTGRES_DB")
 
 db_uri = POSTGRES
 
-# Attempt to connect to PostgreSQL directly
-db = configure_db(pg_host, pg_user, pg_password, pg_db)
-
-
 st.success("Connected to PostgreSQL successfully!")
 
 
