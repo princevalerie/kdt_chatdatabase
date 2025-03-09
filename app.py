@@ -157,7 +157,7 @@ agent = create_sql_agent(
         "Make output are scannable and easy to understand for the user.",
         "Additionally, present the output in list format and/or table format wherever applicable to enhance readability."
     ],
-    top_k=5,  # Allow access to all approved tables
+    top_k=1,  # Allow access to all approved tables
     max_iterations=10  # Allow more complex queries within approved tables
 )
 
