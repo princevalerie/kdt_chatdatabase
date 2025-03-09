@@ -33,7 +33,7 @@ api_key = st.sidebar.text_input(label="Groq API Key", type="password")
 st.sidebar.markdown("[Get your API key here](https://console.groq.com/playground)")
 
 # LLM Model
-llm = ChatGroq(groq_api_key=api_key, model_name="Llama3-70b-8192", streaming=True)
+llm = ChatGroq(groq_api_key=api_key, model_name="Llama3-8b-8192", streaming=True)
 
 # Define tables to check globally
 tables_to_check = ['users_vw', 'surveys_vw', 'survey_winners', 'survey_fillers', 'filler_criterias','disbursed_detail_vw']
