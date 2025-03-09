@@ -28,7 +28,6 @@ db_uri = POSTGRES
 
 st.success("Connected to PostgreSQL successfully!")
 
-
 # API Key Input
 api_key = st.sidebar.text_input(label="Groq API Key", type="password")
 st.sidebar.markdown("[Get your API key here](https://console.groq.com/playground)")
@@ -52,8 +51,6 @@ def validate_connection(engine):
         return False
 
 def configure_db(pg_host=None, pg_user=None, pg_password=None, pg_db=None):
-
-
     """Returns a SQLDatabase instance based on the selected configuration."""
     def create_and_validate_engine(db_url):
         engine = create_engine(db_url)
@@ -106,9 +103,7 @@ def configure_db(pg_host=None, pg_user=None, pg_password=None, pg_db=None):
             st.error(f"❌ PostgreSQL connection failed: {e}")
             st.stop()
 
-# Initialize database connection
-if db_uri == POSTGRES:
-    db = configure_db(db_uri, pg_host, pg_user, pg_password, pg_db)
+# Removed redundant database connection attempt
 
 # Toolkit
 toolkit = SQLDatabaseToolkit(db=db, llm=llm)
