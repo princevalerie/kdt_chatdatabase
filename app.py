@@ -88,7 +88,7 @@ def configure_db(pg_host=None, pg_user=None, pg_password=None, pg_db=None):
             engine,
             include_tables=existing_tables,
             schema='public',
-            sample_rows_in_table_info=25,
+            sample_rows_in_table_info=5,
             view_support=True
         )
 
@@ -166,8 +166,8 @@ agent = create_sql_agent(
         "Make output are scannable and easy to understand for the user.",
         "Additionally, present the output in list format and/or table format wherever applicable to enhance readability."
     ],
-    top_k=1,  # Allow access to all approved tables
-    max_iterations=5  # Allow more complex queries within approved tables
+    top_k=5,  
+    max_iterations=10  
 )
 
 # Message history
