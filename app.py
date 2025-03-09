@@ -79,7 +79,7 @@ def configure_db(pg_host=None, pg_user=None, pg_password=None, pg_db=None):
             engine,
             include_tables=existing_tables,
             schema='public',
-            sample_rows_in_table_info=1,
+            sample_rows_in_table_info=20,
             view_support=True
         )
 
