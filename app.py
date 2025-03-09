@@ -3,13 +3,9 @@ from pathlib import Path
 from langchain_community.agent_toolkits.sql.base import create_sql_agent
 from langchain_community.utilities import SQLDatabase
 from langchain.agents.agent_types import AgentType
-
 from langchain_community.callbacks import StreamlitCallbackHandler
-
 from langchain_community.agent_toolkits.sql.toolkit import SQLDatabaseToolkit
-
 from sqlalchemy import create_engine, inspect, event
-
 import psycopg2
 from langchain_groq import ChatGroq
 import urllib.parse
@@ -22,11 +18,6 @@ st.title("Chat with your database")
 # Define constants for database types
 POSTGRES = "USE_POSTGRES"
 
-# Sidebar - Choose database
-radio_opt = ["Connect to PostgreSQL Database"]
-selected_opt = st.sidebar.radio(label="Choose the DB you want to chat with", options=radio_opt)
-
-# Initialize Database Variables
 # Initialize Database Variables
 pg_host = os.getenv("POSTGRES_HOST")
 pg_user = os.getenv("POSTGRES_USER")
@@ -35,21 +26,14 @@ pg_db = os.getenv("POSTGRES_DB")
 
 db_uri = POSTGRES
 
-
-# Attempt to connect to PostgreSQL
-try:
-    db = configure_db(db_uri, pg_host, pg_user, pg_password, pg_db)
-    st.success("Connected to PostgreSQL successfully!")
-except Exception as e:
-    st.error("❌ Connection failed. Please contact the developer regarding PostgreSQL credential issues.")
-    st.stop()
+# Attempt to connect to PostgreSQL directly
+db = configure_db(db_uri, pg_host, pg_user, pg_password, pg_db)
+st.success("Connected to PostgreSQL successfully!")
 
 
-if not db_uri:
-    st.info("Please enter the database information and URI.")
-
-if not api_key:
-    st.info("Please add the Groq API key.")
+# API Key Input
+api_key = st.sidebar.text_input(label="Groq API Key", type="password")
+st.sidebar.markdown("[Get your API key here](https://console.groq.com/playground)")
 
 # LLM Model
 llm = ChatGroq(groq_api_key=api_key, model_name="Llama3-8b-8192", streaming=True)
