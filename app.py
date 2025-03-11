@@ -166,7 +166,6 @@ agent = create_sql_agent(
         "Make output are scannable and easy to understand for the user.",
         "Additionally, present the output in list format and/or table format wherever applicable to enhance readability."
     ],
-    top_k=5,  
     max_iterations=10  
 )
 
