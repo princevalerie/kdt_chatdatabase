@@ -144,7 +144,7 @@ agent = create_sql_agent(
 
     extra_prompt_messages=[
         "do not give or query with limit queries unless the input context is limit related",
-        "Always give user sql query and answer","if you can't load full table make limit 5 and give user full query","STRICT RULES: You can ONLY access the following tables: users_vw, surveys_vw, survey_winners, survey_fillers, filler_criterias,disbursed_detail_vw",
+        "Always give user sql query and answer","STRICT RULES: You can ONLY access the following tables: users_vw, surveys_vw, survey_winners, survey_fillers, filler_criterias,disbursed_detail_vw",
         "Before any query execution or even thinking about a query, verify it only involves the approved tables.",
         "If a query requires accessing other tables, respond immediately with:",
         "'Access denied. I can only work with the specified tables.'",
