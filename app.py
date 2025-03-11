@@ -10,6 +10,7 @@ import psycopg2
 from langchain_groq import ChatGroq
 import urllib.parse
 import os
+import pandas as pd
 
 # Streamlit Page Setup
 st.set_page_config(page_title="Chat with your database")
@@ -32,17 +33,8 @@ st.success("Connected to PostgreSQL successfully!")
 api_key = st.sidebar.text_input(label="Groq API Key", type="password")
 st.sidebar.markdown("[Get your API key here](https://console.groq.com/playground)")
 
-# Check if API Key is provided
-if not api_key:
-    st.error("❌ Please provide your Groq API Key.")
-    st.stop()
-
 # LLM Model
-try:
-    llm = ChatGroq(groq_api_key=api_key, model_name="Llama3-8b-8192", streaming=True)
-except GroqError as e:
-    st.error(f"❌ Groq Error: {str(e)}")
-    st.stop()
+llm = ChatGroq(groq_api_key=api_key, model_name="Llama3-8b-8192", streaming=True)
 
 # Define tables to check globally
 tables_to_check = ['users_vw', 'surveys_vw', 'survey_winners', 'survey_fillers', 'filler_criterias','disbursed_detail_vw']
@@ -81,8 +73,8 @@ def configure_db(pg_host=None, pg_user=None, pg_password=None, pg_db=None):
         def prevent_destructive_operations(conn, clauseelement, multiparams, params):
             if isinstance(clauseelement, str):
                 query = clauseelement.upper()
-                if 'DELETE' in query or 'TRUNCATE' in query:
-                    raise Exception("DELETE and TRUNCATE operations are not permitted")
+            if 'DELETE' in query or 'TRUNCATE' in query or 'CREATE' in query or 'UPDATE' in query:
+                raise Exception("operations are not permitted")
             
         return SQLDatabase(
             engine,
@@ -152,7 +144,7 @@ agent = create_sql_agent(
     handle_parsing_errors=True,
 
     extra_prompt_messages=[
-        "STRICT RULES: You can ONLY access the following tables: users_vw, surveys_vw, survey_winners, survey_fillers, filler_criterias,disbursed_detail_vw",
+        "Always give user sql query and answer","if you can't load full table make limit 5 and give user full query","STRICT RULES: You can ONLY access the following tables: users_vw, surveys_vw, survey_winners, survey_fillers, filler_criterias,disbursed_detail_vw",
         "Before any query execution or even thinking about a query, verify it only involves the approved tables.",
         "If a query requires accessing other tables, respond immediately with:",
         "'Access denied. I can only work with the specified tables.'",
@@ -166,7 +158,8 @@ agent = create_sql_agent(
         "Make output are scannable and easy to understand for the user.",
         "Additionally, present the output in list format and/or table format wherever applicable to enhance readability."
     ],
-    max_iterations=10  
+    top_k=5,  # Allow access to all approved tables
+    max_iterations=10  # Allow more complex queries within approved tables
 )
 
 # Message history
@@ -190,4 +183,28 @@ if user_query:
         response = safe_agent_run(user_query, callbacks=[st_cb])
 
         st.session_state.messages.append({"role": "assistant", "content": response})
-        st.write(response)
+
+        # Coba tampilkan response dalam format tabel jika memungkinkan
+        if isinstance(response, (list, tuple)):
+            try:
+                # Jika response adalah list of dict, langsung konversi ke DataFrame
+                if all(isinstance(item, dict) for item in response):
+                    df = pd.DataFrame(response)
+                # Jika response adalah list of tuple atau list, maka cek apakah elemen pertama adalah tuple/list
+                elif len(response) > 0 and isinstance(response[0], (list, tuple)):
+                    # Buat nama kolom default berdasarkan jumlah elemen
+                    num_cols = len(response[0])
+                    col_names = [f"column_{i+1}" for i in range(num_cols)]
+                    df = pd.DataFrame(response, columns=col_names)
+                else:
+                    # Jika tidak terdeteksi, tampilkan response secara langsung
+                    st.write(response)
+                    df = None
+
+                if df is not None:
+                    st.table(df)
+            except Exception as e:
+                st.error(f"Terjadi error saat mengubah data ke DataFrame: {e}")
+                st.write(response)
+        else:
+            st.write(response)
