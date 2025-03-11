@@ -182,10 +182,12 @@ if user_query:
         st_cb = StreamlitCallbackHandler(st.container())
         response = safe_agent_run(user_query, callbacks=[st_cb])
 
-        st.session_state.messages.append({"role": "assistant", "content": response})
+    st.session_state.messages.append({"role": "assistant", "content": response})
+    st.write(f"User query: {user_query}")  # Log the user query for debugging
+
 
         # Coba tampilkan response dalam format tabel jika memungkinkan
-        if isinstance(response, (list, tuple)):
+    if isinstance(response, (list, tuple)):
             try:
                 # Jika response adalah list of dict, langsung konversi ke DataFrame
                 if all(isinstance(item, dict) for item in response):
@@ -206,5 +208,5 @@ if user_query:
             except Exception as e:
                 st.error(f"Terjadi error saat mengubah data ke DataFrame: {e}")
                 st.write(response)
-        else:
+    else:
             st.write(response)
