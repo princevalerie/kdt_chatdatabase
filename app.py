@@ -72,6 +72,8 @@ def configure_db(pg_host=None, pg_user=None, pg_password=None, pg_db=None):
         def prevent_destructive_operations(conn, clauseelement, multiparams, params):
             if isinstance(clauseelement, str):
                 query = clauseelement.upper()
+            else:
+                query = ""
             if 'DELETE' in query or 'TRUNCATE' in query or 'CREATE' in query or 'UPDATE' in query:
                 raise Exception("operations are not permitted")
             
@@ -106,10 +108,8 @@ def configure_db(pg_host=None, pg_user=None, pg_password=None, pg_db=None):
 # Initialize database connection
 db = configure_db(pg_host, pg_user, pg_password, pg_db)
 
-
 # Toolkit
 toolkit = SQLDatabaseToolkit(db=configure_db(pg_host, pg_user, pg_password, pg_db), llm=llm)
-
 
 # Create SQL Agent with strict table access
 def validate_query(query: str) -> bool:
@@ -144,7 +144,7 @@ agent = create_sql_agent(
 
     extra_prompt_messages=[
         "do not give or query with limit queries unless the input context is limit related",
-        "Always give user sql query and answer","STRICT RULES: You can ONLY access the following tables: users_vw, surveys_vw, survey_winners, survey_fillers, filler_criterias,disbursed_detail_vw",
+        "Always give user sql query and answer","STRICT RULES: You can ONLY access the following tables:  ['users_vw', 'surveys_vw', 'survey_winners', 'survey_fillers', 'filler_criterias','disbursed_detail_vw']",
         "Before any query execution or even thinking about a query, verify it only involves the approved tables.",
         "If a query requires accessing other tables, respond immediately with:",
         "'Access denied. I can only work with the specified tables.'",
