@@ -71,9 +71,9 @@ def configure_db(pg_host=None, pg_user=None, pg_password=None, pg_db=None):
         # Add event listener to prevent DELETE/TRUNCATE operations
         @event.listens_for(engine, 'before_execute')
         def prevent_destructive_operations(conn, clauseelement, multiparams, params):
-            if isinstance(clauseelement, str):
-                query = clauseelement.upper()
+            query = clauseelement.upper() if isinstance(clauseelement, str) else ""
             if 'DELETE' in query or 'TRUNCATE' in query or 'CREATE' in query or 'UPDATE' in query:
+
                 raise Exception("operations are not permitted")
             
         return SQLDatabase(
