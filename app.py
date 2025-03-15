@@ -143,7 +143,7 @@ agent = create_sql_agent(
     handle_parsing_errors=True,
 
     extra_prompt_messages=[
-        "always do not query with limit queries unless the input context is limit related",
+        "if you access too much output, limit it with query limit but never give a limit to the final output unless the context is related to the limit",
         "Always give user sql query and answer","STRICT RULES: You can ONLY access the following tables:  ['users_vw', 'surveys_vw', 'survey_winners', 'survey_fillers', 'filler_criterias','disbursed_detail_vw']",
         "Before any query execution or even thinking about a query, verify it only involves the approved tables.",
         "If a query requires accessing other tables, respond immediately with:",
